@@ -41,7 +41,18 @@ if __name__ == "__main__":
             Designation = emp_dict.get('Designation')
             email_id = emp_dict.get('EmailId')
             download_image(img_url,'Emp_images', f"{emp_name}.jpg", email_id)
-            id +=1
+            
+
+            # Create folder for each employee using their email ID
+            each_user_folder = os.path.join('Emp_images', email_id)
+            os.makedirs(each_user_folder, exist_ok=True)
+
+            # Save employee JSON data
+            file_path = os.path.join(each_user_folder, "data.json")
+            with open(file_path, "w") as f:
+                json.dump(emp_dict, f, indent=4)
+            
+            id += 1
     
     print("Total Employees Processed:", id)
     
