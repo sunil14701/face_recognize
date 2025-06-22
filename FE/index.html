@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Face Recognition Web App</title>
+</head>
+<body>
+  <h2>click Face Search</h2>
+  <video id="video" width="320" height="240" autoplay></video>
+  <br>
+  <button onclick="captureAndSend()">Capture & Identify</button>
+  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+  <pre id="result"></pre>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+
+    // Access webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream)
+      .catch(err => alert("Camera error: " + err));
+
+    function captureAndSend() {
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(async blob => {
+        const formData = new FormData();
+        formData.append("file", blob, "capture.jpg");
+
+        try {
+          const res = await fetch("https://f9f2-103-211-54-244.ngrok-free.app/search/", {
+            method: "POST",
+            body: formData
+          });
+
+          const json = await res.json();
+          result.textContent = JSON.stringify(json, null, 2);
+        } catch (e) {
+          result.textContent = "Raise Error: " + e.stack;
+        }
+      }, "image/jpeg");
+    }
+  </script>
+</body>
+</html>
+
+
+<!-- python3 -m http.server 5500 -->
+ <!-- ngrok http 5500 -->
+  <!-- ngrok start --all --config="ngrok.yml" -> mutliple servers -->

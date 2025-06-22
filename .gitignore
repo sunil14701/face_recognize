@@ -3,3 +3,4 @@
 **/train_data
 **/venv
 /gpt_api.py
+*.pyc
